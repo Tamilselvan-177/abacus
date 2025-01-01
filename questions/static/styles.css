@@ -1,0 +1,95 @@
+/* Navigation Bar */
+nav {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Button */
+.button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #45a049;
+}
+
+/* Test Results Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+/* Zoom Effect on the buttons */
+.zoom-img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.zoom-img:hover {
+    transform: scale(1.1);
+}
+
+/* 3D Card Hover Effect */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth Transitions for other elements */
+.card-header, .card-body {
+    transition: background-color 0.3s ease;
+}
+
+.card-header:hover, .card-body:hover {
+    background-color: #f8f9fa;
+}
+
+/* General styling for the hover effects */
+.btn-primary {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+/* Padding for each card */
+.card-body {
+    padding: 20px; /* Adjust the padding value as needed */
+}
+
+/* Optional: Add padding to card columns for better spacing between cards */
+.col-md-4 {
+    padding: 10px; /* Adjust the padding for spacing between cards */
+}

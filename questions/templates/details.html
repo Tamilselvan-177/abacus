@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abacus Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .question-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .question-box {
+            width: 9%; /* Adjusted to fit 10 question boxes per row */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            margin-right: 1%;
+        }
+        .question-box .qno {
+            background-color: #007bff; /* Blue background */
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .input-box {
+            width: 100%;
+            margin-top: 5px;
+        }
+        .incorrect {
+            border-color: red; /* Make the border red for incorrect answer */
+        }
+        .correct {
+            border-color: green; /* Make the border green for correct answer */
+        }
+        .return-btn {
+            width: 200px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Abacus Test</h1>
+
+           <!-- Return Button -->
+           <div class="text-center return-btn">
+            <a href="{% url 'view_previous_tests' %}" class="btn btn-primary">Return to Result Page</a>
+        </div>
+        <div class="question-row">
+            {% for question in combined_json %}
+            <div class="question-box">
+                <p class="qno">Question {{ question.id }}:</p>
+                
+                <!-- Row 1 -->
+                <p>
+                    {{ question.row1 }}
+                </p>
+        
+                <!-- Row 2 -->
+                <p>
+                    {{ question.row2 }}
+                </p>
+        
+                <!-- Row 3 -->
+                <p>
+                    {{ question.row3 }}
+                </p>
+
+                <!-- Correct Answer -->
+                <p>
+                    Answer: {{ question.ans }}
+                </p>
+
+                <!-- User Answer and Condition for Color -->
+                {% if question.user_ans %}
+                    {% if question.user_ans == question.ans %}
+                        <input type="text" class="form-control correct" value="{{ question.user_ans }}" style="color: green;" disabled>
+                    {% else %}
+                        <input type="text" class="form-control incorrect" value="{{ question.user_ans }}" style="color: red;" disabled>
+                    {% endif %}
+                {% else %}
+                    <input type="text" class="form-control" value="{{ question.user_ans }}" disabled>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+     
+    </div>
+</body>
+</html>

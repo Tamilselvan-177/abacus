@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abacus Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .question-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .question-box {
+            width: 9%; /* Adjusted to fit 10 question boxes per row */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            margin-right: 1%;
+        }
+        .question-box .qno {
+            background-color: #007bff; /* Blue background */
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .input-box {
+            width: 100%;
+            margin-top: 5px;
+        }
+        #timer {
+            font-size: 1.5rem;
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-submit {
+            display: block;
+            width: 100%;
+            font-size: 1.25rem;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Abacus Test</h1>
+        <div id="timer" class="text-center mb-3">Time Left: 10:00</div>
+        <form method="POST" action="{% url 'submit_test' %}" name="testForm" id="testForm">
+            {% csrf_token %}
+            
+            <!-- Hidden input for test ID -->
+            <input type="hidden" name="test_id" value="{{ test.id }}">
+
+            <div class="question-row">
+                {% for question in questions %}
+                <div class="question-box">
+                    <p class="qno">Question {{ question.id }}:</p>
+                    
+                    <!-- Row 1 -->
+                    <p>
+                        {{ question.row1}}
+                    </p>
+            
+                    <!-- Row 2 -->
+                    <p>
+                        {{ question.row2 }}
+                    </p>
+            
+                    <!-- Row 3 -->
+                    <p>
+                        {{ question.row3 }}
+                    </p>
+            
+                    <!-- Input Box for Answer -->
+                    <input type="text" id="answer_{{ question.id }}" name="answer_{{ question.id }}" placeholder="Enter answer" class="form-control">
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn-submit">Submit</button>
+            <input type="hidden" id="remaining_time" name="remaining_time" value="600">
+            <input type="hidden" id="level" name="level" value="{{ level }}">
+        </form>
+    </div>
+ 
+    <script>
+        var timer = 600; // Set timer to 10 minutes (600 seconds)
+        var timerInput = document.getElementById('remaining_time'); // Reference to the hidden input
+    
+        var timerInterval = setInterval(function () {
+            var minutes = Math.floor(timer / 60);
+            var seconds = timer % 60;
+            document.getElementById('timer').innerText = 
+                "Time Left: " + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+            
+            // Update the hidden input field with the remaining time
+            timerInput.value = timer;
+    
+            timer--;
+    
+            if (timer < 0) {
+                clearInterval(timerInterval);
+                alert("Time's up! Submitting your answers...");
+                document.getElementById('testForm').submit(); // Automatically submit the form
+            }
+        }, 1000);
+    
+        // Prevent back and reload (without confirmation dialogs)
+        window.onbeforeunload = function () {
+            return null; // Prevents confirmation dialogs on page unload or refresh
+        };
+    
+        // Prevent using the back button (using history state management)
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.pushState(null, null, location.href);
+        };
+    
+        // Disable right-click to prevent opening context menu
+        window.oncontextmenu = function () {
+            return false;
+        };
+    
+        // Disable F5 (refresh) and Ctrl + R
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'F5') || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                alert("You cannot refresh the page during the test.");
+            }
+        });
+    
+        // Prevent mobile users from using the back button or refreshing
+        window.addEventListener('touchstart', function (e) {
+            // Detect a touch event (mobile screens)
+            if (e.targetTouches.length === 1) {
+                // Disable swipe to go back on mobile
+                if (window.history && window.history.pushState) {
+                    e.preventDefault(); // Prevent navigation
+                    history.pushState(null, null, location.href); // Push the state to prevent back
+                }
+            }
+        }, { passive: false });
+    
+        // Prevent closing or navigating away from the page entirely
+        window.addEventListener('unload', function () {
+            // We can do additional checks here if needed
+        });
+    
+        // Ensure form submission removes beforeunload
+        document.getElementById('testForm').addEventListener('submit', function () {
+            window.onbeforeunload = null; // Disable unload prompt when form is submitted
+            window.removeEventListener('beforeunload', function (e) {
+                e.preventDefault();
+                e.returnValue = "";
+            });
+        });
+    
+        // Block browser's back navigation using the "popstate" event
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.pushState(null, null, location.href);
+        };
+    
+        // Block the navigation attempt entirely on mobile devices
+        window.addEventListener("popstate", function (event) {
+            history.pushState(null, null, location.href);
+        });
+    
+        // Disable the browser's top reload button (reload or refresh button in the toolbar)
+        window.addEventListener("beforeunload", function (event) {
+            // Block reload action
+            event.preventDefault();
+            event.returnValue = "";
+        });
+    
+        // Prevent page reload via browser's top reload button (works in most modern browsers)
+        window.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                alert("You cannot refresh the page during the test.");
+            }
+        });
+    
+        // Disabling page reload with additional event for tab visibility change (for tab refresh attempts)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                alert("You cannot refresh the page during the test.");
+            }
+        });
+    
+        // Disable page reload if the user tries to reload the page directly using the reload button
+        window.addEventListener("pagehide", function (e) {
+            if (e.persisted) {
+                e.preventDefault();
+                e.returnValue = false; // Prevent page refresh or reload when the user tries to refresh via the reload button.
+            }
+        });
+    </script>
+    
+    
+    
+    
+</body>
+</html>

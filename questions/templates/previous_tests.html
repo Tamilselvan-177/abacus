@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-nav .nav-item .nav-link {
+            font-weight: 500;
+        }
+
+
+        .table {
+            margin-top: 50px;
+        }
+
+        .table th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        /* Fade-in animation */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <a class="navbar-brand" href="{% url 'home' %}">Abacus Online</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_previous_tests' %}">Previous Test Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login_user' %}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+<!-- Test Result Table -->
+<div class="container mt-5 fade-in">
+    <h2>Your Previous Test Results</h2>
+    {% if user.test_set.all %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>level</th>
+
+                    <th>Marks Obtained</th>
+                    <th>Wrong Answers</th>
+                    <th>Time Taken</th>
+                    <th>Created at</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in user.test_set.all %}
+                    <tr>
+                        <td>{{ test.level }}</td>
+                        <td>{{ test.marks_obtained }}</td>
+                        <td>{{ test.wrong_answers }}</td>
+                        <td>{{ test.time_taken }} seconds</td>
+                        <td>{{test.created_at}}</td>
+                        
+                        <td><a href="{% url 'details' test.test_id %}">Click Here</a></td>
+                        
+                    
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have not taken any tests yet.</p>
+    {% endif %}
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
